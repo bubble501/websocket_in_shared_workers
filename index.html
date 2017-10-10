@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title></title>
+  <link rel="stylesheet" href="">
+  <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+</head>
+<body>
+
+  <div>
+    <p>Message: <span id="message"></span></p>
+    <a   href="" onclick="terminateSharedWorker">close</a>
+  </div>
+
+  <script>
+  if (typeof(window.SharedWorker) === 'undefined') {
+    throw("Your browser does not support SharedWorkers")
+  }
+  // Start our new worker
+  var worker = new SharedWorker("./shared_worker8.js");
+  worker.port.postMessage({cls: 'classA'});
+  // Whenever we get a message, set the #message element to the data brought in
+  worker.port.onmessage = function(evt){
+    console.log(evt.data);
+    $('#message').text(JSON.stringify(evt.data));
+  };
+  // If we get an error, log it out and close the worker.
+  worker.onerror = function(err){
+    console.log(err.message);
+    worker.port.close();
+  }
+  // Start the worker.
+  worker.port.start();
+  
+//   function terminateSharedWorker() {
+//       worker.terminate();
+
+//   }
+  </script>
+
+</body>
+</html>
