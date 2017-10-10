@@ -6,38 +6,25 @@
   <title></title>
   <link rel="stylesheet" href="">
   <script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+  <script src="./shared_worker_helper1.js"></script>
 </head>
 <body>
 
   <div>
     <p>Message: <span id="message"></span></p>
-    <a   href="" onclick="terminateSharedWorker">close</a>
+
   </div>
 
   <script>
-  if (typeof(window.SharedWorker) === 'undefined') {
-    throw("Your browser does not support SharedWorkers")
-  }
-  // Start our new worker
-  var worker = new SharedWorker("./shared_worker8.js");
-  worker.port.postMessage({cls: 'classA'});
-  // Whenever we get a message, set the #message element to the data brought in
-  worker.port.onmessage = function(evt){
-    console.log(evt.data);
-    $('#message').text(JSON.stringify(evt.data));
-  };
-  // If we get an error, log it out and close the worker.
-  worker.onerror = function(err){
-    console.log(err.message);
-    worker.port.close();
-  }
-  // Start the worker.
-  worker.port.start();
-  
-//   function terminateSharedWorker() {
-//       worker.terminate();
+ classA_message_handler = (event) => {
+     console.log(event.data);
+     $('#message').text(JSON.stringify(event.data));
+ }
 
-//   }
+ var wsm = new WebSocketManager();
+ wsm.register('classA', classA_message_handler);
+ wsm.start();
+
   </script>
 
 </body>
